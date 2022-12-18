@@ -1,0 +1,48 @@
+<div class="center">
+
+
+    <div class="chat">
+        <div class="contact bar">
+            <div class="pic fri"> </div>
+            <div class="name">
+                Fri UNIZA
+            </div>
+
+        </div>
+
+        <div class="messages" id="chat">
+            <div class="time">
+                Dnes o {{startTime}}
+            </div>
+
+            <div *ngFor="let message of messages">
+                <div class="message {{message.author}}" mat-button matTooltip="Info about the action">
+                    {{ message.text }}
+                </div>
+            </div>
+
+            <div *ngIf="writing" class="message stark">
+                <div class="typing typing-1"></div>
+                <div class="typing typing-2"></div>
+                <div class="typing typing-3"></div>
+            </div>
+
+        </div> 
+        <div style="height: 85px"> 
+            <div class="input">
+                
+                <i class="fa-solid fa-face-laugh-beam"></i>
+                <input 
+                    #messageText
+                    [value]="this.data"
+                    placeholder="Tu napíš svoju správu!" 
+                    type="text"  
+                    (keyup.enter)="addStudentMessage(messageText.value)"
+                />
+                <i (click)="addStudentMessage(messageText.value)">
+                    <fa-icon [icon]="faArrowRight"></fa-icon>
+                </i>
+            </div>
+        </div>
+    </div>
+</div> 
