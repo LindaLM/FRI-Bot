@@ -4,10 +4,11 @@ import pickle
 from tensorflow import keras
 
 class LSTMPredictionService():
-    def __init__(self, LSTM_model_path, input_dictionary_path, reverse_dictionary_path, max_sequence_lenght, latent_dim):
+    def __init__(self, LSTM_model_path, dictionary_paths, max_sequence_lenght, latent_dim):
         self.latent_dim = latent_dim
-        self.input_dict = self.load_dictionary(reverse_dictionary_path)[0]
-        self.reverse_dict = self.load_dictionary(reverse_dictionary_path)[1]
+        self.input_dict = self.load_dictionary(dictionary_paths)[0]
+        self.target_dict = self.load_dictionary(dictionary_paths)[1]
+        self.reverse_dict = self.load_dictionary(dictionary_paths)[2]
         self.max_sequence_len = max_sequence_lenght
 
         self.encoder_model = None
@@ -69,7 +70,7 @@ class LSTMPredictionService():
         # Generate empty target sequence of length 1.
         target_seq = np.zeros((1, 1, len(self.reverse_dict)))
         # Populate the first character of target sequence with the start character.
-        target_seq[0, 0, self.input_dictionary_path["\t"]] = 1.0
+        target_seq[0, 0, self.target_dict["\t"]] = 1.0
 
         # Sampling loop for a batch of sequences
         # (to simplify, here we assume a batch of size 1).

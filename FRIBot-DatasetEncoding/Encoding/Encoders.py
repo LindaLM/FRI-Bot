@@ -203,6 +203,7 @@ class EncoderLSTM(Encoder):
         backend_dict_file = output_file + "_backend_dictionaries"
         print(f'[INFO] Saving backend dictionaries to {backend_dict_file}', end = '')        
         backend_dicts = (input_token_index,
+                        target_token_index,
                         reverse_target_char_index)
         self.save_to_file(backend_dict_file, backend_dicts)
         print('...DONE')
