@@ -1,6 +1,8 @@
 import { formatDate } from '@angular/common';
-import { Component, ViewChild} from '@angular/core';
-import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
+import { Component} from '@angular/core';
+import { faPaperPlane, faWindowMinimize, faEnvelope} from '@fortawesome/free-regular-svg-icons';
+import { RestApiService } from '../shared/rest-api.service';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'chat-window',
@@ -9,23 +11,36 @@ import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 })
 
 
-
 export class ChatWindowComponent {
-  faArrowRight = faPaperPlane;
-  data: string = '';
+  constructor(public restApi: RestApiService) {}
 
-  writing: boolean = true
-  startTime = formatDate(Date.now(),'HH:mm:ss', 'en-US'); 
+  faArrowRight = faPaperPlane;
+  faMinimize = faWindowMinimize;
+  faEmail = faEnvelope;
+  reactiveForm = new FormGroup({
+    message: new FormControl(''),
+  });
+
+
+  displayChat: boolean = true
+  writing: boolean = false
+  startTime = formatDate(Date.now(),'HH:mm', 'en-US'); 
   //startTime: string = new Date().toTimeString()
-  messages: Array<Message> = [new Message("FRI", "Ahoj, ako ti môžem pomôcť?", "10:55"), new Message("student", "Kedy bude chatbot hotový?", "10:55"), new Message("FRI", "Dobrá otázka.", "10:58"), new Message("FRI", "Robíme všetko pre to, aby to bolo čo najskôr?", "10:58")]
+  messages: Array<Message> = []//[new Message("FRI", "Ahoj, ako ti môžem pomôcť?", "10:55"), new Message("student", "Kedy bude chatbot hotový?", "10:55"), new Message("FRI", "Dobrá otázka.", "10:58"), new Message("FRI", "Robíme všetko pre to, aby to bolo čo najskôr?", "10:58")]
 
   onMouseEnter() {
     console.log("jou")
   }
 
   addStudentMessage(text : string) {
-    this.messages.push(new Message("student", this.data = text, new Date().toTimeString()))
-    getAnswer(text)
+    this.messages.push(new Message("student", text, new Date().toTimeString()))
+    this.reactiveForm.reset()
+    this.writing = true
+    this.restApi.getAnswer(text).subscribe(data => {
+      console.log(data)
+      this.messages.push(new Message("fri", data.prediction + "", new Date().toTimeString()))
+      this.writing = false
+    })
   }
 }
 
@@ -40,38 +55,3 @@ export class Message {
       this.time = time;
   }
 }
-
-async function getAnswer(sentence: string) {
-  try {
-    console.log(sentence)
-    // 👇️ const response: Response
-    const response = await fetch('http://localhost:8000/api/messages', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error! status: ${response.status}`);
-    }
-
-    const result = (await response.json()) as GetAnswerResponse;
-
-    console.log('result is: ', JSON.stringify(result, null, 4));
-
-    return result;
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log('error message: ', error.message);
-      return error.message;
-    } else {
-      console.log('unexpected error: ', error);
-      return 'An unexpected error occurred';
-    }
-  }
-}
-
-type GetAnswerResponse = {
-  data: Message;
-};

@@ -1,13 +1,21 @@
 <div class="center">
-
-
-    <div class="chat">
-        <div class="contact bar">
-            <div class="pic fri"> </div>
-            <div class="name">
-                Fri UNIZA
-            </div>
-
+    <div 
+        class="chat"
+        (style)="[displayChat ? 'display: none;' : 'display:none;']"
+        >
+            <div class="contact bar">
+                <div class="pic fri"> </div>
+                <div style="display: flex;">
+                    <div class="name">
+                        Fri UNIZA
+                    </div>
+                    <div class="control-buttons">
+                        <i (click)="displayChat=false"
+                        >
+                            <fa-icon [icon]="faMinimize"></fa-icon>
+                        </i>
+                    </div>
+                </div>
         </div>
 
         <div class="messages" id="chat">
@@ -30,18 +38,19 @@
         </div> 
         <div style="height: 85px"> 
             <div class="input">
-                
-                <i class="fa-solid fa-face-laugh-beam"></i>
-                <input 
+              <form [formGroup]="reactiveForm">
+                <input  
                     #messageText
-                    [value]="this.data"
+                    type="text"                      
                     placeholder="Tu napíš svoju správu!" 
-                    type="text"  
                     (keyup.enter)="addStudentMessage(messageText.value)"
+                    style="width: 75%;"
+                    formControlName="message"
                 />
                 <i (click)="addStudentMessage(messageText.value)">
                     <fa-icon [icon]="faArrowRight"></fa-icon>
                 </i>
+              </form>
             </div>
         </div>
     </div>
